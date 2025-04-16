@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>KaijuRPG v0.1.1</title>
+  <title>KaijuRPG v0.1.2</title>
   <style>
     body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
     .tab-buttons button {
@@ -25,6 +25,12 @@
 	  transition: opacity 0.2s ease;
 	}
   </style>
+
+  <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
 </head>
 <body>
 
@@ -120,7 +126,9 @@
 	  </div>
 
     <div class="status-row" style="font-size: 0.9em; color: gray;">
-      ⏱ Last Saved: <span id="last-saved">Never</span>
+      ⏱ Last Saved (Local): <span id="last-saved-local">Never</span>
+      <br>
+      ☁️ Last Saved (Cloud): <span id="last-saved-cloud">Never</span>
     </div>    
   </div>
 
@@ -273,12 +281,22 @@
 <div class="tab-content" id="save-tab">
   <div class="panel">
     <h3>💾 Save / Load Game</h3>
-    <p><strong>Version:</strong> <span id="save-version">0.1.1</span></p>
+    <p><strong>Version:</strong> <span id="save-version">0.1.2</span></p>
 
     <button onclick="saveGame()" style="margin: 10px 0;">💾 Save Game</button>
     <span id="save-status" style="margin-left: 10px; font-size: 0.9em; color: #2e7d32;"></span><br>
 
     <button onclick="resetSave()" style="margin: 10px 0; color: red;">♻️ Reset Game</button>
+
+    <hr>
+    <h4>🔐 Google Sign-In</h4>
+    <button onclick="signInWithGoogle()">Sign in with Google</button>
+    <p>Signed in as: <span id="user-name" style="font-weight: bold;">Not signed in</span></p>
+
+    <hr>
+    <h4>☁️ Cloud Save</h4>
+    <br>
+    <button id="cloud-save-btn" onclick="saveToCloud(currentUserUID)" disabled style="padding: 8px 16px;">☁️ Save to Cloud</button>
   </div>
 </div>
 
@@ -343,6 +361,7 @@
 </div>
 
 <script>
+  let currentUserUID = null;
   let currentAction = null;
   let currentAssignment = null;
   let isEvacuating = false;
@@ -1417,7 +1436,7 @@
   
   function saveGame() {
     const gameData = {
-      version: "0.1.1",
+      version: "0.1.2", // or your current version
       inventory,
       skills,
       equipment,
@@ -1429,18 +1448,24 @@
 
     localStorage.setItem("KaijuRPG_Save", JSON.stringify(gameData));
 
-    // ✅ Show save confirmation + time
-    const statusEl = document.getElementById("save-status");
+    // You may already have this from earlier:
     const now = new Date();
     const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    statusEl.textContent = `Game saved at ${timeString}`;
 
-    const lastSavedEl = document.getElementById("last-saved");
+    // Update Save Tab status (you may already have this)
+    const statusEl = document.getElementById("save-status");
+    if (statusEl) {
+      statusEl.textContent = `Game saved at ${timeString}`;
+    }
+
+    // ✅ Now add this line to store the time in localStorage
+    localStorage.setItem("KaijuRPG_LastSaved", timeString);
+
+    // ✅ And update the Player Status Panel UI
+    const lastSavedEl = document.getElementById("last-saved-local");
     if (lastSavedEl) {
       lastSavedEl.textContent = timeString;
     }
-
-    localStorage.setItem("KaijuRPG_LastSaved", timeString);
   }
   
   function loadGame() {
@@ -1474,7 +1499,7 @@
       // ✅ Load last saved time
       const last = localStorage.getItem("KaijuRPG_LastSaved");
       if (last) {
-        const lastSavedEl = document.getElementById("last-saved");
+        const lastSavedEl = document.getElementById("last-saved-local");
         if (lastSavedEl) {
           lastSavedEl.textContent = last;
         }
@@ -1506,6 +1531,150 @@
     updateUsePotionButton();
     startRegenLoop();
   });
+
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAEDUd-w52zCwwh7KZ2kx-ubIRX25jFMZs",
+        authDomain: "kaijurpg-21454.firebaseapp.com",
+        databaseURL: "https://kaijurpg-21454-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "kaijurpg-21454",
+        storageBucket: "kaijurpg-21454.firebasestorage.app",
+        messagingSenderId: "772939855563",
+        appId: "1:772939855563:web:e58489b31badc0e6958d4e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    function saveToCloud(userId) {
+      if (!userId) {
+        alert("You're not signed in. Please sign in with Google first.");
+        return;
+      }
+
+      const gameData = {
+        version: "0.1.2",
+        inventory,
+        skills,
+        equipment,
+        energy,
+        health,
+        money,
+        slayerPoints,
+        savedAt: new Date().toISOString()
+      };
+
+      db.ref("saves/" + userId).set(gameData)
+        .then(() => {
+          alert("✅ Game saved to the cloud!");
+    
+          const now = new Date();
+          const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+          const cloudSavedEl = document.getElementById("last-saved-cloud");
+          if (cloudSavedEl) cloudSavedEl.textContent = timeString;
+
+          // Also store it in localStorage to restore on login
+          localStorage.setItem("KaijuRPG_LastCloudSaved", timeString);
+        })
+        .catch(err => console.error("Cloud save failed:", err));
+    }
+
+    function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user;
+          currentUserUID = user.uid;
+
+          document.getElementById("user-name").textContent = user.displayName;
+          document.getElementById("cloud-save-btn").disabled = false;
+
+          // ✅ Compare timestamps and load the most recent save
+          resolveSaveConflict(currentUserUID);
+        })
+        .catch((error) => {
+          console.error("Google Sign-in Failed:", error);
+        });
+    }
+
+    function loadFromCloud(userId) {
+        if (!userId) {
+            alert("Please enter a Save ID before loading.");
+            return;
+        }
+
+        db.ref("saves/" + userId).get().then(snapshot => {
+            if (!snapshot.exists()) {
+            alert("❌ No cloud save found for this ID.");
+            return;
+            }
+
+            const data = snapshot.val();
+            if (data.savedAt) {
+              const time = new Date(data.savedAt);
+              const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+              const cloudSavedEl = document.getElementById("last-saved-cloud");
+              if (cloudSavedEl) cloudSavedEl.textContent = timeString;
+
+              // Save it for later
+              localStorage.setItem("KaijuRPG_LastCloudSaved", timeString);
+            }
+
+            inventory = data.inventory || {};
+            skills = { ...skills, ...(data.skills || {}) };
+            equipment = { ...equipment, ...(data.equipment || {}) };
+            energy = data.energy ?? energy;
+            health = data.health ?? health;
+            money = data.money ?? money;
+            slayerPoints = data.slayerPoints ?? slayerPoints;
+
+            updateStatus();
+            updateEquipmentUI();
+            updateUsePotionButton();
+            updateForgeLocks();
+            for (let skill in skills) updateSkillUI(skill);
+            renderInventory();
+
+            alert(`✅ Game loaded from the cloud! Last saved: ${data.savedAt}`);
+        }).catch(err => console.error("Cloud load failed:", err));
+    }
+
+    function resolveSaveConflict(uid) {
+      const localTime = localStorage.getItem("KaijuRPG_LastSaved");
+      const cloudRef = db.ref("saves/" + uid);
+
+      cloudRef.get().then(snapshot => {
+        if (!snapshot.exists()) {
+          // No cloud save, fallback to local
+          loadGame();
+          return;
+        }
+
+        const cloudData = snapshot.val();
+        const cloudTime = cloudData.savedAt;
+
+        // Fallback to Jan 1, 1970 if time doesn't exist (unlikely)
+        const localDate = localTime ? new Date("1970-01-01T" + localTime) : new Date(0);
+        const cloudDate = cloudTime ? new Date(cloudTime) : new Date(0);
+
+        if (cloudDate > localDate) {
+          alert("☁️ Loaded cloud save (newer).");
+          loadFromCloud(uid);
+        } else if (localDate > cloudDate) {
+          alert("💾 Loaded local save (newer).");
+          loadGame();
+        } else {
+          alert("🟰 Both saves are the same. Loading local save by default.");
+          loadGame();
+        }
+      }).catch(err => {
+        console.error("Error during save conflict check:", err);
+        loadGame(); // fallback just in case
+      });
+    }
 
 </script>
 
