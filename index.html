@@ -124,7 +124,7 @@
 	  
 	  <div class="status-row">
 		<div class="progress-container" style="margin-top: 5px;">
-		  <div class="progress-bar" id="recharge-bar" style="background-color: #2196F3;"></div>
+		  <div class="progress-bar" id="energy-bar" style="background-color: #2196F3;"></div>
 		</div>
 	  </div>
 	  
@@ -894,14 +894,15 @@
 
   function updateStatus() {
     document.getElementById("energy").textContent = energy;
+    document.getElementById("energy-bar").style.width = (energy / 100 * 100) + "%";
     document.getElementById("money").textContent = money.toFixed(2);
-	document.getElementById("slayer-points").textContent = slayerPoints;
-	document.getElementById("recharge-btn").disabled = isRecharging || energy >= 100;
-	document.getElementById("health").textContent = health;
-	document.getElementById("max-health").textContent = maxHealth;
-	document.getElementById("health-bar").style.width = (health / maxHealth * 100) + "%";
-	document.getElementById("power-level").textContent = calculatePowerLevel();
-	document.getElementById("status-effects").textContent = statusEffects.length > 0 ? statusEffects.join(", ") : "None";
+	  document.getElementById("slayer-points").textContent = slayerPoints;
+	  document.getElementById("recharge-btn").disabled = isRecharging || energy >= 100;
+	  document.getElementById("health").textContent = health;
+	  document.getElementById("max-health").textContent = maxHealth;
+	  document.getElementById("health-bar").style.width = (health / maxHealth * 100) + "%";
+	  document.getElementById("power-level").textContent = calculatePowerLevel();
+	  document.getElementById("status-effects").textContent = statusEffects.length > 0 ? statusEffects.join(", ") : "None";
   }
   
   function updateForgeLocks() {
@@ -941,16 +942,25 @@
     document.getElementById("recharge-btn").disabled = true;
     rechargeProgress = 0;
 
+    // ✅ Show "Recharging..." in action panel
+    document.getElementById("current-action").textContent = "Recharging...";
+
     rechargeInterval = setInterval(() => {
       rechargeProgress += 100 / (rechargeTime / 100);
-      document.getElementById("recharge-bar").style.width = rechargeProgress + "%";
+
+      // ✅ Use main progress bar instead of recharge-bar
+      document.getElementById("progress-bar").style.width = rechargeProgress + "%";
 
       if (rechargeProgress >= 100) {
         clearInterval(rechargeInterval);
         energy = 100;
         isRecharging = false;
-        document.getElementById("recharge-bar").style.width = "0%";
+
+        // ✅ Reset UI
+        document.getElementById("progress-bar").style.width = "0%";
+        document.getElementById("current-action").textContent = "Idle";
         document.getElementById("recharge-btn").disabled = false;
+
         updateStatus();
       }
     }, 100);
