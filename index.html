@@ -372,6 +372,8 @@
     <p><strong>Guildmaster:</strong> "I've got just the task for someone of your strength..."</p>
     <button id="get-task-btn" onclick="assignGuildTask()">Get Assignment</button>
 
+    <button id="reroll-task-btn" onclick="rerollSlayerTask()" disabled>🔁 Re-roll Task (100 Slayer Points)</button>
+
     <div id="assignment-result" style="margin-top: 10px;"></div>
     
     <div id="complete-task-wrapper" style="margin-top: 10px;">
@@ -1425,6 +1427,15 @@
     document.getElementById("get-task-btn").disabled = true;
   }
 
+  function rerollSlayerTask() {
+    if (!currentAssignment || slayerPoints < 100) return;
+
+    slayerPoints -= 100;
+    assignGuildTask(); // ✅ reuse the existing assignment logic
+    updateStatus();
+    updateAssignmentStatus();
+    renderCurrentAssignment();
+  }
 
   function updateAssignmentStatus() {
     const statusEl = document.getElementById("slayer-assignment-status");
@@ -1469,6 +1480,15 @@
     } 
     else {
       resultEl.innerHTML = `<p>🎯 No current assignment.</p>`;
+    }
+
+    const rerollBtn = document.getElementById("reroll-task-btn");
+    if (rerollBtn) {
+      if (!currentAssignment) {
+        rerollBtn.disabled = true;
+      } else {
+        rerollBtn.disabled = slayerPoints < 100;
+      }
     }
 
     const getBtn = document.getElementById("get-task-btn");
