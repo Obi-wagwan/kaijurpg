@@ -941,7 +941,7 @@
 
     isRecharging = true;
     document.getElementById("recharge-btn").disabled = true;
-    document.getElementById("stop-btn").disabled = true;
+    document.getElementById("stop-button").disabled = true;
     rechargeProgress = 0;
 
     // ✅ Show "Recharging..." in action panel
@@ -962,7 +962,7 @@
         document.getElementById("progress-bar").style.width = "0%";
         document.getElementById("current-action").textContent = "Idle";
         document.getElementById("recharge-btn").disabled = false;
-        document.getElementById("stop-btn").disabled = false;
+        document.getElementById("stop-button").disabled = false;
 
         updateStatus();
       }
