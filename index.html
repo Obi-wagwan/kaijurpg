@@ -1278,6 +1278,11 @@
   function logHuntMessage(message) {
     const log = document.getElementById("hunt-log");
 
+    // ✅ Auto-clear the log if it exceeds 20 messages
+    if (log.children.length >= 20) {
+      log.innerHTML = "";
+    }
+
     const now = new Date();
     const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
@@ -1504,7 +1509,7 @@
           health += 1;
           if (health > maxHealth) health = maxHealth;
 
-          logHuntMessage("💚 You regenerated 1 HP.");
+          //logHuntMessage("💚 You regenerated 1 HP.");
           updateStatus();
           updateUsePotionButton();
           regenTimer = 6;
