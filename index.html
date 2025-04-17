@@ -27,6 +27,7 @@
     #save-conflict-modal th {padding: 6px 10px; text-align: center;}
     #slayer-assignment-status {font-size: 0.9em; color: gray;}
     .assignment-complete {color: #d4af37 !important; /* ✨ GOLD */ font-weight: bold;animation: pulse 1s ease-in-out infinite alternate;}
+    #complete-task-btn:enabled {background-color: #d4af37; font-weight: bold; color: white;}
 
 @keyframes pulse {
   0% { opacity: 1; }
@@ -1458,7 +1459,7 @@
       `;
       const completeBtn = document.getElementById("complete-task-btn");
       if (completeBtn) {
-        if (!currentAssignment || !currentAssignment.type) {
+        if (!currentAssignment || !currentAssignment.creature) {
           completeBtn.disabled = true;
         } else {
           completeBtn.disabled = currentAssignment.completed < currentAssignment.quantity;
