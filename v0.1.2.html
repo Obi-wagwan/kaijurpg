@@ -1647,46 +1647,32 @@
       const cloudRef = db.ref("saves/" + uid);
 
       cloudRef.get().then(snapshot => {
-        const cloudData = snapshot.exists() ? snapshot.val() : null;
-        const cloudTime = cloudData?.savedAt;
+        if (!snapshot.exists()) {
+          // No cloud save, fallback to local
+          loadGame();
+          return;
+        }
 
-        const localDate = localTime ? new Date("1970-01-01T" + localTime) : null;
-        const cloudDate = cloudTime ? new Date(cloudTime) : null;
+        const cloudData = snapshot.val();
+        const cloudTime = cloudData.savedAt;
 
-        if (localDate && cloudDate) {
-          // ✅ Both exist — prompt player
-          const formattedLocal = localTime;
-          const formattedCloud = new Date(cloudTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        // Fallback to Jan 1, 1970 if time doesn't exist (unlikely)
+        const localDate = localTime ? new Date("1970-01-01T" + localTime) : new Date(0);
+        const cloudDate = cloudTime ? new Date(cloudTime) : new Date(0);
 
-          const useCloud = confirm(
-            `🧠 You have both a Local and Cloud save.\n\n` +
-            `Local: ${formattedLocal}\n` +
-            `Cloud: ${formattedCloud}\n\n` +
-            `Click OK to load ☁️ Cloud save.\nClick Cancel to load 💾 Local save.`
-          );
-
-          if (useCloud) {
-            loadFromCloud(uid);
-          } else {
-            loadGame();
-          }
-        } else if (cloudDate) {
-          alert("☁️ Only cloud save found. Loading cloud.");
+        if (cloudDate > localDate) {
+          alert("☁️ Loaded cloud save (newer).");
           loadFromCloud(uid);
-        } else if (localDate) {
-          alert("💾 Only local save found. Loading local.");
+        } else if (localDate > cloudDate) {
+          alert("💾 Loaded local save (newer).");
           loadGame();
         } else {
-          alert("🚫 No save found. Starting fresh.");
-          updateStatus();
-          updateEquipmentUI();
-          updateUsePotionButton();
-          updateForgeLocks();
-          renderInventory();
+          alert("🟰 Both saves are the same. Loading local save by default.");
+          loadGame();
         }
       }).catch(err => {
         console.error("Error during save conflict check:", err);
-        loadGame(); // fallback
+        loadGame(); // fallback just in case
       });
     }
 
