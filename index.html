@@ -1645,6 +1645,13 @@
     }
 
     function resolveSaveConflict(uid) {
+      if (!uid) {
+        // ✅ Not signed in, skip conflict check
+        console.log("🧪 Not signed in. Loading local save.");
+        loadGame();
+        return;
+      }
+      
       const localTime = localStorage.getItem("KaijuRPG_LastSaved");
       const cloudRef = db.ref("saves/" + uid);
 
