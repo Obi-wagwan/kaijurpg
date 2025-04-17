@@ -490,10 +490,10 @@
     }
   }
 
-  function calculatePowerLevel() {
+  function calculatePowerLevel(equip = equipment) {
     let power = 0;
-    for (let slot in equipment) {
-      const item = equipment[slot];
+    for (let slot in equip) {
+      const item = equip[slot];
       if (item && gearStats[item]) {
         power += gearStats[item].power;
       }
@@ -1444,6 +1444,7 @@
       energy,
       health,
       money,
+      currentAssignment,
       slayerPoints
     };
 
@@ -1487,6 +1488,7 @@
       energy = data.energy ?? 100;
       health = data.health ?? 100;
       money = data.money ?? 0;
+      currentAssignment = data.currentAssignment || null;
       slayerPoints = data.slayerPoints ?? 0;
 
       updateStatus();
@@ -1561,6 +1563,7 @@
         energy,
         health,
         money,
+        currentAssignment,
         slayerPoints,
         savedAt: new Date().toISOString()
       };
@@ -1629,6 +1632,7 @@
             energy = data.energy ?? energy;
             health = data.health ?? health;
             money = data.money ?? money;
+            currentAssignment = data.currentAssignment || null;
             slayerPoints = data.slayerPoints ?? slayerPoints;
 
             updateStatus();
@@ -1701,6 +1705,40 @@
           document.getElementById("modal-cloud-skills").textContent = getSkillSum(cloudData.skills);
           document.getElementById("modal-cloud-items").textContent = getItemCount(cloudData.inventory);
           document.getElementById("modal-cloud-slayer").textContent = cloudData.slayerPoints || 0;
+
+          // 💰 Money
+          document.getElementById("modal-local-money").textContent = `$${money.toFixed(2)}`;
+          document.getElementById("modal-cloud-money").textContent = `$${(cloudData.money || 0).toFixed(2)}`;
+
+          // ⚔️ Power Level (supports external comparison)
+          const calculatePowerLevelFromEquip = (equip = {}) => {
+            let power = 0;
+            for (let slot in equip) {
+              const item = equip[slot];
+              if (item && gearStats[item]) {
+                power += gearStats[item].power;
+              }
+            }
+            return power;
+          };
+
+          document.getElementById("modal-local-power").textContent = calculatePowerLevel();
+          document.getElementById("modal-cloud-power").textContent = calculatePowerLevelFromEquip(cloudData.equipment);
+
+          // 🎯 Assignment
+          const formatAssignment = (a) => {
+            return a ? `${a.category}: ${a.completed} / ${a.quantity}` : "None";
+          };
+          document.getElementById("modal-local-assignment").textContent = formatAssignment(currentAssignment);
+          document.getElementById("modal-cloud-assignment").textContent = formatAssignment(cloudData.currentAssignment);
+
+          // 🛡️ Gear
+          const formatGear = (e) => {
+            if (!e) return "None";
+            return Object.entries(e).map(([slot, item]) => `${slot}: ${item || 'None'}`).join(", ");
+          };
+          document.getElementById("modal-local-gear").textContent = formatGear(equipment);
+          document.getElementById("modal-cloud-gear").textContent = formatGear(cloudData.equipment);
 
           pendingCloudSnapshot = cloudData;
           pendingCloudUID = uid;
@@ -1796,9 +1834,24 @@
         <th>☁️ Cloud</th>
       </tr>
       <tr>
+        <td>🎯 Assignment</td>
+        <td id="modal-local-assignment">--</td>
+        <td id="modal-cloud-assignment">--</td>
+      </tr>
+      <tr>
         <td>🏋️ Total Skill Level</td>
         <td id="modal-local-skills">--</td>
         <td id="modal-cloud-skills">--</td>
+      </tr>
+      <tr>
+        <td>⚔️ Power Level</td>
+        <td id="modal-local-power">--</td>
+        <td id="modal-cloud-power">--</td>
+      </tr>
+      <tr>
+        <td>🛡️ Gear</td>
+        <td id="modal-local-gear">--</td>
+        <td id="modal-cloud-gear">--</td>
       </tr>
       <tr>
         <td>🎒 Inventory Items</td>
@@ -1809,6 +1862,11 @@
         <td>🎯 Slayer Points</td>
         <td id="modal-local-slayer">--</td>
         <td id="modal-cloud-slayer">--</td>
+      </tr>
+      <tr>
+        <td>💰 Money</td>
+        <td id="modal-local-money">--</td>
+        <td id="modal-cloud-money">--</td>
       </tr>
     </table>    
 
