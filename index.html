@@ -127,6 +127,10 @@
 		🎯 Slayer Points: <span id="slayer-points">0</span>
 	  </div>
 
+    <div class="status-row" id="slayer-assignment-status" style="font-size: 0.9em; color: gray;">
+      📜 Assignment: None
+    </div>    
+
     <div class="status-row" style="font-size: 0.9em; color: gray;">
       ⏱ Last Saved (Local): <span id="last-saved-local">Never</span>
       <br>
@@ -1380,8 +1384,21 @@
       <p>✅ Assignment: Defeat <strong>${quantity} ${category}</strong> for bonus Slayer Points.</p>
       <p style="color: gray;">Progress: 0 / ${quantity}</p>
     `;
+
+    updateAssignmentStatus();
   }
 
+  function updateAssignmentStatus() {
+    const statusEl = document.getElementById("slayer-assignment-status");
+
+    if (!statusEl) return;
+
+    if (currentAssignment) {
+      statusEl.textContent = `📜 Assignment: ${currentAssignment.category} (${currentAssignment.completed} / ${currentAssignment.quantity})`;
+    } else {
+      statusEl.textContent = "📜 Assignment: None";
+    }
+  }
   
   function startRegenLoop() {
     let regenTimer = 6;
@@ -1497,6 +1514,7 @@
       health = data.health ?? 100;
       money = data.money ?? 0;
       currentAssignment = data.currentAssignment || null;
+      updateAssignmentStatus();
       slayerPoints = data.slayerPoints ?? 0;
 
       updateStatus();
@@ -1641,6 +1659,7 @@
             health = data.health ?? health;
             money = data.money ?? money;
             currentAssignment = data.currentAssignment || null;
+            updateAssignmentStatus();
             slayerPoints = data.slayerPoints ?? slayerPoints;
 
             updateStatus();
