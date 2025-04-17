@@ -1353,40 +1353,38 @@
   
   function assignGuildTask() {
     const hunterLevel = skills.hunter.level;
-    const power = calculatePowerLevel();
     const resultEl = document.getElementById("assignment-result");
 
-    let category = "";
-    let quantity = 0;
+    // ✅ Build list of unlocked monsters based ONLY on hunter level
+    const unlockedMonsters = Object.keys(monsters).filter(name => {
+      const m = monsters[name];
+      return m.required && hunterLevel >= m.required.hunterLevel;
+    });
 
-    // Logic: Assign based on player capability
-    if (hunterLevel >= 3 && power >= 15) {
-      // Eligible for Carnivores
-      category = "Carnivores";
-      quantity = Math.floor(Math.random() * 21) + 30; // 30–50
-    } else if (hunterLevel >= 1 && power >= 5) {
-      // Eligible for Herbivores
-      category = "Herbivores";
-      quantity = Math.floor(Math.random() * 21) + 40; // 40–60
-    } else {
-      resultEl.innerHTML = `<p>❌ Come back when you're stronger! (Hunter Lv 1+, Power 5+ required)</p>`;
+    if (unlockedMonsters.length === 0) {
+      resultEl.innerHTML = `<p>❌ You haven't unlocked any Slayer creatures yet.</p>`;
       return;
     }
 
-    // Store assignment globally (can expand later)
+    // ✅ Pick one randomly
+    const chosen = unlockedMonsters[Math.floor(Math.random() * unlockedMonsters.length)];
+    const qty = Math.floor(Math.random() * 21) + 30; // 30–50
+
     currentAssignment = {
-      category,
-      quantity,
+      creature: chosen,
+      quantity: qty,
       completed: 0
     };
 
     resultEl.innerHTML = `
-      <p>✅ Assignment: Defeat <strong>${quantity} ${category}</strong> for bonus Slayer Points.</p>
-      <p style="color: gray;">Progress: 0 / ${quantity}</p>
+      <p>✅ Assignment: Defeat <strong>${qty} ${chosen}</strong> for bonus Slayer Points.</p>
+      <p style="color: gray;">Progress: 0 / ${qty}</p>
     `;
 
     updateAssignmentStatus();
+    renderCurrentAssignment();
   }
+
 
   function updateAssignmentStatus() {
     const statusEl = document.getElementById("slayer-assignment-status");
@@ -1562,7 +1560,7 @@
       localStorage.removeItem("KaijuRPG_Save");
       location.reload(); // reload to start fresh
     }
-    
+
     renderCurrentAssignment();
 
   }
