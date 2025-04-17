@@ -1645,18 +1645,29 @@
 
     function resolveSaveConflict(uid) {
       if (!uid) {
-        // ✅ Not signed in, skip conflict check
         console.log("🧪 Not signed in. Loading local save.");
         loadGame();
         return;
       }
-      
+
       const localTime = localStorage.getItem("KaijuRPG_LastSaved");
       const cloudRef = db.ref("saves/" + uid);
 
       cloudRef.get().then(snapshot => {
-        const cloudData = snapshot.exists() ? snapshot.val() : null;
+        if (!snapshot.exists()) {
+          console.log("☁️ No cloud save found. Loading local.");
+          loadGame();
+          return;
+        }
+
+        const cloudData = snapshot.val();
         const cloudTime = cloudData?.savedAt;
+
+        if (!cloudTime) {
+          console.log("☁️ Cloud save is missing timestamp. Loading local.");
+          loadGame();
+          return;
+        }
 
         const localDate = localTime ? new Date(localTime) : null;
         const cloudDate = cloudTime ? new Date(cloudTime) : null;
@@ -1678,8 +1689,7 @@
           pendingCloudUID = uid;
 
           document.getElementById("save-conflict-modal").style.display = "flex";
-        }
-        else if (cloudDate) {
+        } else if (cloudDate) {
           alert("☁️ Only cloud save found. Loading cloud.");
           loadFromCloud(uid);
         } else if (localDate) {
