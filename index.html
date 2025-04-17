@@ -1733,12 +1733,22 @@
           document.getElementById("modal-cloud-assignment").textContent = formatAssignment(cloudData.currentAssignment);
 
           // 🛡️ Gear
-          const formatGear = (e) => {
-            if (!e) return "None";
-            return Object.entries(e).map(([slot, item]) => `${slot}: ${item || 'None'}`).join(", ");
+          const fillGearRow = (gear, prefix) => {
+            const slots = ["helmet", "armor", "weapon", "accessory", "potion"];
+            slots.forEach(slot => {
+              const el = document.getElementById(`gear-${prefix}-${slot}`);
+              if (el) {
+                const item = gear?.[slot] || "None";
+                el.textContent = `${slot.charAt(0).toUpperCase() + slot.slice(1)}: ${item}`;
+              }
+            });
           };
-          document.getElementById("modal-local-gear").textContent = formatGear(equipment);
-          document.getElementById("modal-cloud-gear").textContent = formatGear(cloudData.equipment);
+
+          // Local
+          fillGearRow(equipment, "local");
+
+          // Cloud
+          fillGearRow(cloudData.equipment, "cloud");
 
           pendingCloudSnapshot = cloudData;
           pendingCloudUID = uid;
@@ -1848,10 +1858,25 @@
         <td id="modal-local-power">--</td>
         <td id="modal-cloud-power">--</td>
       </tr>
+      <tr><td rowspan="6">🛡️ Gear</td>
+        <td id="gear-local-helmet">--</td>
+        <td id="gear-cloud-helmet">--</td>
+      </tr>
       <tr>
-        <td>🛡️ Gear</td>
-        <td id="modal-local-gear">--</td>
-        <td id="modal-cloud-gear">--</td>
+        <td id="gear-local-armor">--</td>
+        <td id="gear-cloud-armor">--</td>
+      </tr>
+      <tr>
+        <td id="gear-local-weapon">--</td>
+        <td id="gear-cloud-weapon">--</td>
+      </tr>
+      <tr>
+        <td id="gear-local-accessory">--</td>
+        <td id="gear-cloud-accessory">--</td>
+      </tr>
+      <tr>
+        <td id="gear-local-potion">--</td>
+        <td id="gear-cloud-potion">--</td>
       </tr>
       <tr>
         <td>🎒 Inventory Items</td>
