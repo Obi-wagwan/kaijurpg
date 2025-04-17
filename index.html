@@ -371,6 +371,9 @@
     <p><strong>Guildmaster:</strong> "I've got just the task for someone of your strength..."</p>
     <button onclick="assignGuildTask()">Get Assignment</button>
     <div id="assignment-result" style="margin-top: 10px;"></div>
+    <div id="complete-task-wrapper" style="margin-top: 10px; display: none;">
+      <button onclick="completeSlayerTask()">✅ Complete Task</button>
+    </div>
   </div>
 </div>
 
@@ -1441,10 +1444,43 @@
         <p>✅ Assignment: Defeat <strong>${currentAssignment.quantity} ${currentAssignment.creature}</strong> for bonus Slayer Points.</p>
         <p style="color: ${progressColor};">Progress: ${currentAssignment.completed} / ${currentAssignment.quantity}</p>
       `;
+      const taskDone = currentAssignment.completed >= currentAssignment.quantity;
+      document.getElementById("complete-task-wrapper").style.display = taskDone ? "block" : "none";
     } 
     else {
       resultEl.innerHTML = `<p>🎯 No current assignment.</p>`;
     }
+  }
+
+  function completeSlayerTask() {
+    if (!currentAssignment) return;
+
+    const monsterName = currentAssignment.creature;
+    const monster = monsters[monsterName];
+    const quantity = currentAssignment.quantity;
+    const hunterLevel = skills.hunter.level;
+
+    // Get the monster's required hunter level (difficulty baseline)
+    const monsterLevel = monster?.required?.hunterLevel || 1;
+
+    // Difficulty ratio: how hard this monster is for the player's level
+    const difficultyRatio = monsterLevel / Math.max(hunterLevel, 1);
+
+    // Calculate bonus Slayer Points
+    const baseReward = 5;
+    const bonus = Math.floor(baseReward * quantity * difficultyRatio * 0.1); // scaled with quantity and difficulty
+
+    slayerPoints += bonus;
+
+    logHuntMessage(`🎉 Task complete! You earned ${bonus} bonus Slayer Points!`);
+
+    // Clear the task
+    currentAssignment = null;
+
+    // Update all the UI
+    updateAssignmentStatus();
+    renderCurrentAssignment();
+    updateStatus();
   }
   
   function startRegenLoop() {
