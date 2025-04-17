@@ -1399,6 +1399,21 @@
       statusEl.textContent = "📜 Assignment: None";
     }
   }
+
+  function renderCurrentAssignment() {
+    const resultEl = document.getElementById("assignment-result");
+
+    if (!resultEl) return;
+
+    if (currentAssignment) {
+      resultEl.innerHTML = `
+        <p>✅ Assignment: Defeat <strong>${currentAssignment.quantity} ${currentAssignment.category}</strong> for bonus Slayer Points.</p>
+        <p style="color: gray;">Progress: ${currentAssignment.completed} / ${currentAssignment.quantity}</p>
+      `;
+    } else {
+      resultEl.innerHTML = `<p>🎯 No current assignment.</p>`;
+    }
+  }
   
   function startRegenLoop() {
     let regenTimer = 6;
@@ -1515,6 +1530,7 @@
       money = data.money ?? 0;
       currentAssignment = data.currentAssignment || null;
       updateAssignmentStatus();
+      renderCurrentAssignment();
       slayerPoints = data.slayerPoints ?? 0;
 
       updateStatus();
@@ -1546,6 +1562,9 @@
       localStorage.removeItem("KaijuRPG_Save");
       location.reload(); // reload to start fresh
     }
+    
+    renderCurrentAssignment();
+
   }
 
   window.addEventListener("DOMContentLoaded", () => {
@@ -1660,6 +1679,7 @@
             money = data.money ?? money;
             currentAssignment = data.currentAssignment || null;
             updateAssignmentStatus();
+            renderCurrentAssignment();
             slayerPoints = data.slayerPoints ?? slayerPoints;
 
             updateStatus();
