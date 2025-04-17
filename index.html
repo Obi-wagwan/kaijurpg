@@ -1644,6 +1644,8 @@
     }
 
     function resolveSaveConflict(uid) {
+      console.log("resolveSaveConflict CALLED with UID:", uid);
+
       if (!uid) {
         // ✅ Not signed in, skip conflict check
         console.log("🧪 Not signed in. Loading local save.");
