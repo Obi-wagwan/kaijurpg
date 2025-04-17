@@ -400,7 +400,7 @@
     "Copper Armor": { power: 10, requiredLevel: 1 },
     "Copper Sword": { power: 7, requiredLevel: 1 },
 	
-	"Brachydon Hat": { power: 7, requiredLevel: 5, requiredHunterLevel: 5 },
+	  "Brachydon Hat": { power: 7, requiredLevel: 5, requiredHunterLevel: 5 },
     "Brachydon Coat": { power: 12, requiredLevel: 5, requiredHunterLevel: 5 },
     "Brachydon Club": { power: 9, requiredLevel: 5, requiredHunterLevel: 5 }
   };
@@ -442,7 +442,12 @@
     "Copper Helmet": "helmet",
     "Copper Armor": "armor",
     "Copper Sword": "weapon",
-	"Green Potion": "potion"
+
+    "Brachydon Hat": "helmet",
+    "Brachydon Coat": "armor",
+    "Brachydon Club": "weapon",
+
+	  "Green Potion": "potion"
     // Add more items here in the future
   };
 
@@ -1741,8 +1746,7 @@
             slots.forEach(slot => {
               const el = document.getElementById(`gear-${prefix}-${slot}`);
               if (el) {
-                const item = gear?.[slot] || "None";
-                el.textContent = `${slot.charAt(0).toUpperCase() + slot.slice(1)}: ${item}`;
+                el.textContent = gear?.[slot] || "None";
               }
             });
           };
