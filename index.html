@@ -1897,8 +1897,10 @@
 
           // 🎯 Assignment
           const formatAssignment = (a) => {
-            return a ? `${a.category}: ${a.completed} / ${a.quantity}` : "None";
+            if (!a || !a.creature) return "None";
+            return `${a.creature}: ${a.completed} / ${a.quantity}`;
           };
+
           document.getElementById("modal-local-assignment").textContent = formatAssignment(currentAssignment);
           document.getElementById("modal-cloud-assignment").textContent = formatAssignment(cloudData.currentAssignment);
 
