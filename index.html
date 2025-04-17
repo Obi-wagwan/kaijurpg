@@ -1685,6 +1685,24 @@
             hour: '2-digit', minute: '2-digit', second: '2-digit'
           });
 
+          // Helper functions
+          const getSkillSum = (skillObj) => {
+            return Object.values(skillObj || {}).reduce((total, s) => total + (s.level || 0), 0);
+          };
+          const getItemCount = (inv) => {
+            return Object.values(inv || {}).reduce((sum, amt) => sum + amt, 0);
+          };
+
+          // Local values
+          document.getElementById("modal-local-skills").textContent = getSkillSum(skills);
+          document.getElementById("modal-local-items").textContent = getItemCount(inventory);
+          document.getElementById("modal-local-slayer").textContent = slayerPoints;
+
+          // Cloud values
+          document.getElementById("modal-cloud-skills").textContent = getSkillSum(cloudData.skills);
+          document.getElementById("modal-cloud-items").textContent = getItemCount(cloudData.inventory);
+          document.getElementById("modal-cloud-slayer").textContent = cloudData.slayerPoints || 0;
+
           pendingCloudSnapshot = cloudData;
           pendingCloudUID = uid;
 
@@ -1772,6 +1790,28 @@
     <p>You have both a <strong>Local</strong> and a <strong>Cloud</strong> save.</p>
     <p>Local: <span id="modal-local-time">--:--</span></p>
     <p>Cloud: <span id="modal-cloud-time">--:--</span></p>
+    <table style="margin: 10px auto; font-size: 0.9em;">
+      <tr>
+        <th></th>
+        <th>💾 Local</th>
+        <th>☁️ Cloud</th>
+      </tr>
+      <tr>
+        <td>🏋️ Total Skill Level</td>
+        <td id="modal-local-skills">--</td>
+        <td id="modal-cloud-skills">--</td>
+      </tr>
+      <tr>
+        <td>🎒 Inventory Items</td>
+        <td id="modal-local-items">--</td>
+        <td id="modal-cloud-items">--</td>
+      </tr>
+      <tr>
+        <td>🎯 Slayer Points</td>
+        <td id="modal-local-slayer">--</td>
+        <td id="modal-cloud-slayer">--</td>
+      </tr>
+    </table>    
 
     <div style="margin-top: 20px;">
       <button onclick="loadSelectedSave('local')" style="padding: 10px 16px; margin-right: 10px;">💾 Load Local</button>
