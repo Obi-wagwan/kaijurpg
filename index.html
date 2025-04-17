@@ -1212,14 +1212,14 @@
     // ✅ Slayer assignment progress
     if (
       currentAssignment &&
-      currentAssignment.creature === currentMonster.name
+      currentAssignment.creature === currentMonster.name &&
+      currentAssignment.completed < currentAssignment.quantity
     ) {
       currentAssignment.completed++;
       updateAssignmentStatus();
       renderCurrentAssignment();
 
-      // Optional: Auto-complete logic
-      if (currentAssignment.completed >= currentAssignment.quantity) {
+      if (currentAssignment.completed === currentAssignment.quantity) {
         logHuntMessage(`🎉 Assignment complete! Return to the Slayer Guild.`);
       }
     }
