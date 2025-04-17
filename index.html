@@ -1393,7 +1393,7 @@
     if (!statusEl) return;
 
     if (currentAssignment) {
-      statusEl.textContent = `📜 Assignment: ${currentAssignment.category} (${currentAssignment.completed} / ${currentAssignment.quantity})`;
+      statusEl.textContent = `📜 Assignment: ${currentAssignment.creature} (${currentAssignment.completed} / ${currentAssignment.quantity})`;
     } else {
       statusEl.textContent = "📜 Assignment: None";
     }
@@ -1406,7 +1406,7 @@
 
     if (currentAssignment) {
       resultEl.innerHTML = `
-        <p>✅ Assignment: Defeat <strong>${currentAssignment.quantity} ${currentAssignment.category}</strong> for bonus Slayer Points.</p>
+        <p>✅ Assignment: Defeat <strong>${currentAssignment.quantity} ${currentAssignment.creature}</strong> for bonus Slayer Points.</p>
         <p style="color: gray;">Progress: ${currentAssignment.completed} / ${currentAssignment.quantity}</p>
       `;
     } else {
