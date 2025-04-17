@@ -362,6 +362,8 @@
 
 <script>
   let currentUserUID = null;
+  let pendingCloudSnapshot = null;
+  let pendingCloudUID = null;
   let currentAction = null;
   let currentAssignment = null;
   let isEvacuating = false;
@@ -1654,22 +1656,16 @@
         const cloudDate = cloudTime ? new Date(cloudTime) : null;
 
         if (localDate && cloudDate) {
-          // ✅ Both exist — prompt player
-          const formattedLocal = localTime;
-          const formattedCloud = new Date(cloudTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          // Show modal instead of confirm()
+          document.getElementById("modal-local-time").textContent = localTime;
+          document.getElementById("modal-cloud-time").textContent = new Date(cloudTime).toLocaleTimeString([], {
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+          });
 
-          const useCloud = confirm(
-            `🧠 You have both a Local and Cloud save.\n\n` +
-            `Local: ${formattedLocal}\n` +
-            `Cloud: ${formattedCloud}\n\n` +
-            `Click OK to load ☁️ Cloud save.\nClick Cancel to load 💾 Local save.`
-          );
+          pendingCloudSnapshot = cloudData;
+          pendingCloudUID = uid;
 
-          if (useCloud) {
-            loadFromCloud(uid);
-          } else {
-            loadGame();
-          }
+          document.getElementById("save-conflict-modal").style.display = "flex";
         } else if (cloudDate) {
           alert("☁️ Only cloud save found. Loading cloud.");
           loadFromCloud(uid);
@@ -1690,6 +1686,46 @@
       });
     }
 
+    function loadSelectedSave(choice) {
+      document.getElementById("save-conflict-modal").style.display = "none";
+
+      if (choice === "cloud" && pendingCloudSnapshot && pendingCloudUID) {
+        // manually inject cloud data into load logic
+        const data = pendingCloudSnapshot;
+
+        inventory = data.inventory || {};
+        skills = { ...skills, ...(data.skills || {}) };
+        equipment = { ...equipment, ...(data.equipment || {}) };
+        energy = data.energy ?? energy;
+        health = data.health ?? health;
+        money = data.money ?? money;
+        slayerPoints = data.slayerPoints ?? slayerPoints;
+
+        updateStatus();
+        updateEquipmentUI();
+        updateUsePotionButton();
+        updateForgeLocks();
+        for (let skill in skills) updateSkillUI(skill);
+        renderInventory();
+
+        const cloudSavedEl = document.getElementById("last-saved-cloud");
+        if (cloudSavedEl && data.savedAt) {
+          cloudSavedEl.textContent = new Date(data.savedAt).toLocaleTimeString([], {
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+          });
+        }
+
+        alert("☁️ Loaded cloud save.");
+      } else {
+        loadGame();
+        alert("💾 Loaded local save.");
+      }
+
+      // Reset for future sign-ins
+      pendingCloudSnapshot = null;
+      pendingCloudUID = null;
+    }
+
 </script>
 
 <div id="evac-overlay" style="
@@ -1701,6 +1737,24 @@
   pointer-events: none;
   display: none;">
  </div>
+
+<!-- Save Conflict Modal -->
+<div id="save-conflict-modal" style="display: none; position: fixed; top: 0; left: 0; 
+  width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; 
+  display: flex; align-items: center; justify-content: center; font-family: sans-serif;">
+
+  <div style="background: white; padding: 20px 30px; border-radius: 12px; max-width: 400px; text-align: center;">
+    <h3>🧠 Save Conflict</h3>
+    <p>You have both a <strong>Local</strong> and a <strong>Cloud</strong> save.</p>
+    <p>Local: <span id="modal-local-time">--:--</span></p>
+    <p>Cloud: <span id="modal-cloud-time">--:--</span></p>
+
+    <div style="margin-top: 20px;">
+      <button onclick="loadSelectedSave('local')" style="padding: 10px 16px; margin-right: 10px;">💾 Load Local</button>
+      <button onclick="loadSelectedSave('cloud')" style="padding: 10px 16px;">☁️ Load Cloud</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
