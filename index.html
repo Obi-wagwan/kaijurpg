@@ -1458,8 +1458,13 @@
       `;
       const completeBtn = document.getElementById("complete-task-btn");
       if (completeBtn) {
-        completeBtn.disabled = !(currentAssignment.completed >= currentAssignment.quantity);
+        if (!currentAssignment || !currentAssignment.type) {
+          completeBtn.disabled = true;
+        } else {
+          completeBtn.disabled = currentAssignment.completed < currentAssignment.quantity;
+        }
       }
+
     } 
     else {
       resultEl.innerHTML = `<p>🎯 No current assignment.</p>`;
