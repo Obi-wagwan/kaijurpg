@@ -373,9 +373,9 @@
 
     <div id="assignment-result" style="margin-top: 10px;"></div>
     
-    <div id="complete-task-wrapper" style="margin-top: 10px; display: none;">
-      <button onclick="completeSlayerTask()">✅ Complete Task</button>
-    </div>       
+    <div id="complete-task-wrapper" style="margin-top: 10px;">
+      <button id="complete-task-btn" onclick="completeSlayerTask()" disabled>✅ Complete Task</button>
+    </div>          
   </div>
 </div>
 
@@ -1456,8 +1456,10 @@
         <p>✅ Assignment: Defeat <strong>${currentAssignment.quantity} ${currentAssignment.creature}</strong> for bonus Slayer Points.</p>
         <p style="color: ${progressColor};">Progress: ${currentAssignment.completed} / ${currentAssignment.quantity}</p>
       `;
-      const taskDone = currentAssignment.completed >= currentAssignment.quantity;
-      document.getElementById("complete-task-wrapper").style.display = taskDone ? "block" : "none";
+      const completeBtn = document.getElementById("complete-task-btn");
+      if (completeBtn) {
+        completeBtn.disabled = !(currentAssignment.completed >= currentAssignment.quantity);
+      }
     } 
     else {
       resultEl.innerHTML = `<p>🎯 No current assignment.</p>`;
