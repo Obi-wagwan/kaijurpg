@@ -1286,7 +1286,7 @@
     });
 
     const entry = document.createElement("div");
-    entry.textContent = `[${timestamp}] ${message}`;
+    entry.innerHTML = `[${timestamp}] ${message}`;
     log.appendChild(entry);
 
     // ✅ Keep only the last 5 log entries
