@@ -8,12 +8,20 @@
 
 ### v0.1.2 – Cloud Save, Google Sign-In, Save Conflict Resolution
 
-- 🔐 Added Google Sign-In via Firebase
-- ☁️ Cloud save & load (auto-linked to user account)
-- ⚔️ Automatic conflict resolution between local/cloud save
-- ⏱️ Displays "Last Saved (Local)" and "Last Saved (Cloud)" timestamps
-- 🧠 Alert system indicates which save was loaded
-- 🧹 Cleaned up Save tab UX (no manual Save ID entry needed)
+- ✅ Fully functioning Slayer Guild with:
+- Creature-based assignments 🎯
+- Completion rewards & re-rolls 🪙
+- Gold highlight & status tracker 💫
+- ✅ Clean energy system with:
+- Progress bar recharge ⚡
+- UI lock during recharge 🔒
+- Unified action display panel 🎛️
+- ✅ Streamlined combat & regen loop
+- ✅ Polished Save Conflict Modal:
+- Side-by-side stat comparison 🧾
+- Gear breakdown, power level, assignment tracking
+- ✅ Real Google Sign-In + Cloud Save 🔐☁️
+- ✅ Realtime UI updates on load, login, and task flow
 
 ---
 
