@@ -25,6 +25,13 @@
     #save-conflict-modal table {width: 100%; border-collapse: collapse; margin-top: 10px;}
     #save-conflict-modal td {padding: 6px 10px; text-align: left; vertical-align: top;}
     #save-conflict-modal th {padding: 6px 10px; text-align: center;}
+    .assignment-complete {color: #d4af37; font-weight: bold; animation: pulse 1s ease-in-out infinite alternate;}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
 
   </style>
 
@@ -1409,8 +1416,15 @@
 
     if (currentAssignment) {
       statusEl.textContent = `📜 Assignment: ${currentAssignment.creature} (${currentAssignment.completed} / ${currentAssignment.quantity})`;
+
+      if (currentAssignment.completed >= currentAssignment.quantity) {
+        statusEl.classList.add("assignment-complete");
+      } else {
+        statusEl.classList.remove("assignment-complete");
+      }
     } else {
       statusEl.textContent = "📜 Assignment: None";
+      statusEl.classList.remove("assignment-complete");
     }
   }
 
@@ -1420,11 +1434,14 @@
     if (!resultEl) return;
 
     if (currentAssignment) {
+      const progressColor = currentAssignment.completed >= currentAssignment.quantity ? "#d4af37" : "gray";
+
       resultEl.innerHTML = `
         <p>✅ Assignment: Defeat <strong>${currentAssignment.quantity} ${currentAssignment.creature}</strong> for bonus Slayer Points.</p>
-        <p style="color: gray;">Progress: ${currentAssignment.completed} / ${currentAssignment.quantity}</p>
+        <p style="color: ${progressColor};">Progress: ${currentAssignment.completed} / ${currentAssignment.quantity}</p>
       `;
-    } else {
+    } 
+    else {
       resultEl.innerHTML = `<p>🎯 No current assignment.</p>`;
     }
   }
