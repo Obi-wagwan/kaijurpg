@@ -369,7 +369,7 @@
   <div class="panel">
     <h3>🏹 Slayer Guild</h3>
     <p><strong>Guildmaster:</strong> "I've got just the task for someone of your strength..."</p>
-    <button onclick="assignGuildTask()">Get Assignment</button>
+    <button id="get-task-btn" onclick="assignGuildTask()">Get Assignment</button>
 
     <div id="assignment-result" style="margin-top: 10px;"></div>
     
@@ -1421,6 +1421,7 @@
 
     updateAssignmentStatus();
     renderCurrentAssignment();
+    document.getElementById("get-task-btn").disabled = true;
   }
 
 
@@ -1461,6 +1462,11 @@
     else {
       resultEl.innerHTML = `<p>🎯 No current assignment.</p>`;
     }
+
+    const getBtn = document.getElementById("get-task-btn");
+    if (getBtn) {
+      getBtn.disabled = !!currentAssignment;
+    }
   }
 
   function completeSlayerTask() {
@@ -1492,6 +1498,7 @@
     updateAssignmentStatus();
     renderCurrentAssignment();
     updateStatus();
+    document.getElementById("get-task-btn").disabled = false;
   }
   
   function startRegenLoop() {
