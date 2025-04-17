@@ -1450,9 +1450,14 @@
 
     localStorage.setItem("KaijuRPG_Save", JSON.stringify(gameData));
 
-    // You may already have this from earlier:
     const now = new Date();
-    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const isoString = now.toISOString();
+    localStorage.setItem("KaijuRPG_LastSaved", isoString);
+
+    // You can still display the readable time
+    const readable = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const lastSavedEl = document.getElementById("last-saved-local");
+    if (lastSavedEl) lastSavedEl.textContent = readable;
 
     // Update Save Tab status (you may already have this)
     const statusEl = document.getElementById("save-status");
@@ -1460,11 +1465,7 @@
       statusEl.textContent = `Game saved at ${timeString}`;
     }
 
-    // ✅ Now add this line to store the time in localStorage
-    localStorage.setItem("KaijuRPG_LastSaved", timeString);
-
     // ✅ And update the Player Status Panel UI
-    const lastSavedEl = document.getElementById("last-saved-local");
     if (lastSavedEl) {
       lastSavedEl.textContent = timeString;
     }
@@ -1500,12 +1501,10 @@
 
       // ✅ Load last saved time
       const last = localStorage.getItem("KaijuRPG_LastSaved");
-      if (last) {
-        const lastSavedEl = document.getElementById("last-saved-local");
-        if (lastSavedEl) {
-          lastSavedEl.textContent = last;
+        if (last) {
+          const readable = new Date(last).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          document.getElementById("last-saved-local").textContent = readable;
         }
-      }
 
       console.log("Game loaded from version:", version);
     } catch (e) {
@@ -1659,7 +1658,7 @@
         const cloudData = snapshot.exists() ? snapshot.val() : null;
         const cloudTime = cloudData?.savedAt;
 
-        const localDate = localTime ? new Date("1970-01-01T" + localTime) : null;
+        const localDate = localTime ? new Date(localTime) : null;
         const cloudDate = cloudTime ? new Date(cloudTime) : null;
 
         if (localDate && cloudDate) {
