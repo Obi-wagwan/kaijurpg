@@ -22,6 +22,7 @@
     .progress-bar { height: 100%; width: 0%; background: #4caf50; }
     .evac-disabled {pointer-events: none; transition: opacity 0.2s ease;}
     .max-level {color: #999; font-weight: normal;}
+    #save-conflict-modal table td {padding: 2px 8px; vertical-align: top;}
 
   </style>
 
@@ -1859,25 +1860,25 @@
         <td id="modal-cloud-power">--</td>
       </tr>
       <tr><td rowspan="6">🛡️ Gear</td>
-        <td id="gear-local-helmet">--</td>
-        <td id="gear-cloud-helmet">--</td>
+        <td><strong>Helmet:</strong> <span id="gear-local-helmet">--</span></td>
+        <td><strong>Helmet:</strong> <span id="gear-cloud-helmet">--</span></td>
       </tr>
       <tr>
-        <td id="gear-local-armor">--</td>
-        <td id="gear-cloud-armor">--</td>
+        <td><strong>Armor:</strong> <span id="gear-local-armor">--</span></td>
+        <td><strong>Armor:</strong> <span id="gear-cloud-armor">--</span></td>
       </tr>
       <tr>
-        <td id="gear-local-weapon">--</td>
-        <td id="gear-cloud-weapon">--</td>
+        <td><strong>Weapon:</strong> <span id="gear-local-weapon">--</span></td>
+        <td><strong>Weapon:</strong> <span id="gear-cloud-weapon">--</span></td>
       </tr>
       <tr>
-        <td id="gear-local-accessory">--</td>
-        <td id="gear-cloud-accessory">--</td>
+        <td><strong>Accessory:</strong> <span id="gear-local-accessory">--</span></td>
+        <td><strong>Accessory:</strong> <span id="gear-cloud-accessory">--</span></td>
       </tr>
       <tr>
-        <td id="gear-local-potion">--</td>
-        <td id="gear-cloud-potion">--</td>
-      </tr>
+        <td><strong>Potion:</strong> <span id="gear-local-potion">--</span></td>
+        <td><strong>Potion:</strong> <span id="gear-cloud-potion">--</span></td>
+      </tr>      
       <tr>
         <td>🎒 Inventory Items</td>
         <td id="modal-local-items">--</td>
