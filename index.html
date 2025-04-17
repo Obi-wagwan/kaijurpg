@@ -697,6 +697,7 @@
     currentAction = null;
     document.getElementById("current-action").textContent = "Idle";
     document.getElementById("progress-bar").style.width = "0%";
+    if (isRecharging) return; // ✅ Do nothing while recharging
   }
 
   function completeAction(name) {
@@ -940,6 +941,7 @@
 
     isRecharging = true;
     document.getElementById("recharge-btn").disabled = true;
+    document.getElementById("stop-btn").disabled = true;
     rechargeProgress = 0;
 
     // ✅ Show "Recharging..." in action panel
@@ -960,6 +962,7 @@
         document.getElementById("progress-bar").style.width = "0%";
         document.getElementById("current-action").textContent = "Idle";
         document.getElementById("recharge-btn").disabled = false;
+        document.getElementById("stop-btn").disabled = false;
 
         updateStatus();
       }
