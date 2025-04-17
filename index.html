@@ -119,7 +119,7 @@
 
 	  <div class="status-row">
 		⚡ Energy: <span id="energy">100</span>/100
-		<button id="recharge-btn" onclick="startRecharge()" style="margin-left: 10px;">Recharge</button>
+		<button id="recharge-button" onclick="startRecharge()" style="margin-left: 10px;">Recharge</button>
 	  </div>
 	  
 	  <div class="status-row">
@@ -898,7 +898,7 @@
     document.getElementById("energy-bar").style.width = (energy / 100 * 100) + "%";
     document.getElementById("money").textContent = money.toFixed(2);
 	  document.getElementById("slayer-points").textContent = slayerPoints;
-	  document.getElementById("recharge-btn").disabled = isRecharging || energy >= 100;
+	  document.getElementById("recharge-button").disabled = isRecharging || energy >= 100;
 	  document.getElementById("health").textContent = health;
 	  document.getElementById("max-health").textContent = maxHealth;
 	  document.getElementById("health-bar").style.width = (health / maxHealth * 100) + "%";
@@ -940,7 +940,7 @@
     if (isRecharging || energy >= 100) return;
 
     isRecharging = true;
-    document.getElementById("recharge-btn").disabled = true;
+    document.getElementById("recharge-button").disabled = true;
     document.getElementById("stop-button").disabled = true;
     rechargeProgress = 0;
 
@@ -961,7 +961,7 @@
         // ✅ Reset UI
         document.getElementById("progress-bar").style.width = "0%";
         document.getElementById("current-action").textContent = "Idle";
-        document.getElementById("recharge-btn").disabled = false;
+        document.getElementById("recharge-button").disabled = false;
         document.getElementById("stop-button").disabled = false;
 
         updateStatus();
