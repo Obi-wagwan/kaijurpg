@@ -425,8 +425,8 @@
       xpReward: 4,
       slayerPoints: 1,
       drops: [{ item: "Brachydon Pelt", chance: 0.5 },
-			  { item: "Bachydon Femur", chance: 0.05 }
-	  ] // we can fill this in later
+			        { item: "Bachydon Femur", chance: 0.05 }],
+      required: {hunterLevel: 1}
     },
 	
 	"Razoraptor": {
@@ -437,7 +437,8 @@
       attack: 10,
       xpReward: 6,
       slayerPoints: 2,
-      drops: [] // we'll populate this later
+      drops: [],
+      required: {hunterLevel: 3}
     }
 
   };
