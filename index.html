@@ -22,7 +22,6 @@
     .progress-bar { height: 100%; width: 0%; background: #4caf50; }
     .evac-disabled {pointer-events: none; transition: opacity 0.2s ease;}
     .max-level {color: #999; font-weight: normal;}
-    #slayer-tab .button-row {display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;}
     #save-conflict-modal table {width: 100%; border-collapse: collapse; margin-top: 10px;}
     #save-conflict-modal td {padding: 6px 10px; text-align: left; vertical-align: top;}
     #save-conflict-modal th {padding: 6px 10px; text-align: center;}
@@ -370,13 +369,13 @@
   <div class="panel">
     <h3>🏹 Slayer Guild</h3>
     <p><strong>Guildmaster:</strong> "I've got just the task for someone of your strength..."</p>
-    <div class="button-row">
-      <button onclick="assignGuildTask()">Get Assignment</button>
+    <button onclick="assignGuildTask()">Get Assignment</button>
+
+    <div id="assignment-result" style="margin-top: 10px;"></div>
     
-      <div id="complete-task-wrapper" style="display: none;">
-        <button onclick="completeSlayerTask()">✅ Complete Task</button>
-      </div>
-    </div>    
+    <div id="complete-task-wrapper" style="margin-top: 10px; display: none;">
+      <button onclick="completeSlayerTask()">✅ Complete Task</button>
+    </div>       
   </div>
 </div>
 
@@ -1648,7 +1647,6 @@
 	  updateForgeLocks();
     updateUsePotionButton();
     startRegenLoop();
-    renderCurrentAssignment();
   });
 
 
