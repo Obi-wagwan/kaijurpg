@@ -1644,8 +1644,6 @@
     }
 
     function resolveSaveConflict(uid) {
-      console.log("resolveSaveConflict CALLED with UID:", uid);
-
       if (!uid) {
         // ✅ Not signed in, skip conflict check
         console.log("🧪 Not signed in. Loading local save.");
@@ -1663,9 +1661,15 @@
         const localDate = localTime ? new Date(localTime) : null;
         const cloudDate = cloudTime ? new Date(cloudTime) : null;
 
-        if (localDate && cloudDate) {
-          // Show modal instead of confirm()
-          document.getElementById("modal-local-time").textContent = localTime;
+        if (
+          localDate && cloudDate &&
+          !isNaN(localDate.getTime()) &&
+          !isNaN(cloudDate.getTime())
+        ) {
+          document.getElementById("modal-local-time").textContent = new Date(localTime).toLocaleTimeString([], {
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+          });
+
           document.getElementById("modal-cloud-time").textContent = new Date(cloudTime).toLocaleTimeString([], {
             hour: '2-digit', minute: '2-digit', second: '2-digit'
           });
@@ -1674,7 +1678,8 @@
           pendingCloudUID = uid;
 
           document.getElementById("save-conflict-modal").style.display = "flex";
-        } else if (cloudDate) {
+        }
+        else if (cloudDate) {
           alert("☁️ Only cloud save found. Loading cloud.");
           loadFromCloud(uid);
         } else if (localDate) {
