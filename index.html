@@ -942,6 +942,8 @@
     isRecharging = true;
     document.getElementById("recharge-button").disabled = true;
     document.getElementById("stop-button").disabled = true;
+    document.getElementById("evac-overlay").style.display = "block";
+    document.body.classList.add("evac-disabled");
     rechargeProgress = 0;
 
     // ✅ Show "Recharging..." in action panel
@@ -963,6 +965,8 @@
         document.getElementById("current-action").textContent = "Idle";
         document.getElementById("recharge-button").disabled = false;
         document.getElementById("stop-button").disabled = false;
+        document.getElementById("evac-overlay").style.display = "none";
+        document.body.classList.remove("evac-disabled");
 
         updateStatus();
       }
