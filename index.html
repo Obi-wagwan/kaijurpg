@@ -1196,6 +1196,21 @@
 		});
 	  }
 
+    // ✅ Slayer assignment progress
+    if (
+      currentAssignment &&
+      currentAssignment.creature === currentMonster.name
+    ) {
+      currentAssignment.completed++;
+      updateAssignmentStatus();
+      renderCurrentAssignment();
+
+      // Optional: Auto-complete logic
+      if (currentAssignment.completed >= currentAssignment.quantity) {
+        logHuntMessage(`🎉 Assignment complete! Return to the Slayer Guild.`);
+      }
+    }
+
       currentMonster = null;
       monsterHP = 0;
       document.getElementById("encounter-panel").style.display = "none";
